@@ -19,7 +19,7 @@
 			body {
 				display: grid;
 				place-items: center;
-				background: #f9f7f2;
+				background: #fffcf0;
 				font-family: "Segoe UI", Tahoma, sans-serif;
 			}
 
@@ -106,6 +106,26 @@
 				display: block;
 				width: 100%;
 				height: auto;
+			}
+
+			.envelope-stack img.envelope-flower-left {
+				position: absolute;
+				left: -20%;
+				bottom: -55%;
+				width: 50%;
+				height: auto;
+				pointer-events: none;
+				z-index: 8;
+			}
+
+			.envelope-stack img.envelope-flower-right {
+				position: absolute;
+				right: -20%;
+				bottom: -70%;
+				width: 35%;
+				height: auto;
+				pointer-events: none;
+				z-index: 8;
 			}
 
 			.envelope-triangle {
@@ -227,6 +247,8 @@
 					<img class="envelope-photo" src="images/Nico-Vanessa-Foto.svg" alt="Nico and Vanessa" />
 					<div class="envelope-triangle" aria-hidden="true"></div>
 					<img class="envelope-foreground" src="images/envelope_foreground.png" alt="" aria-hidden="true" />
+					<img class="envelope-flower-left" src="images/flower_buttom_left.png" alt="" aria-hidden="true" />
+					<img class="envelope-flower-right" src="images/flower_buttom_right.png" alt="" aria-hidden="true" />
 				</div>
 				<p class="caption caption-invite" id="inviteText">Eine offizielle<br />Einladung folgt</p>
 				<p class="caption caption-bottom" id="bottomText">DRÜCKE AUF DEN UMSCHLAG...</p>
