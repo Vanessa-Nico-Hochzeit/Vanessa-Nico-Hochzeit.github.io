@@ -8,9 +8,11 @@
 		<meta property="og:title" content="Save the Date - Nico & Vanessa" />
 		<meta property="og:description" content="Wir werden heiraten! Eine offizielle Einladung folgt." />
 		<meta property="og:url" content="https://vanessa-nico-hochzeit.github.io/" />
-		<meta property="og:image" content="https://vanessa-nico-hochzeit.github.io/images/enevlope_background.png" />
+		<meta property="og:image" content="https://vanessa-nico-hochzeit.github.io/images/envelope_preview.png" />
 		<meta property="og:image:alt" content="Beige envelope illustration" />
 		<meta property="og:image:type" content="image/png" />
+		<link rel="preload" as="image" href="images/envelope_foreground.png" />
+		<link rel="preload" as="image" href="images/envelope_head_texture.png" />
 		<title>Envelope</title>
 		<style>
 			@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap");
@@ -181,6 +183,22 @@
 				z-index: 6;
 			}
 
+			.envelope-stack img.envelope-stamp {
+				position: absolute;
+				left: 50%;
+				top: 61%;
+				width: 19%;
+				height: auto;
+				transform: translate(-50%, -50%);
+				pointer-events: none;
+				z-index: 9;
+				transition: opacity 180ms ease;
+			}
+
+			.envelope-stack.open .envelope-stamp {
+				opacity: 0;
+			}
+
 			.envelope-triangle-shadow {
 				position: absolute;
 				left: 0;
@@ -207,11 +225,16 @@
 				top: 54%;
 				width: 58%;
 				height: auto;
+				opacity: 0;
 				transform: translate(-50%, -50%);
-				transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+				transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 150ms ease;
 				object-fit: contain;
 				pointer-events: none;
 				z-index: 2;
+			}
+
+			.envelope-stack.shell-ready .envelope-photo {
+				opacity: 1;
 			}
 
 			.envelope-stack.open .envelope-photo {
@@ -288,10 +311,11 @@
 				<p class="caption caption-top" id="topText">Zeit zum Feiern!</p>
 				<p class="caption caption-middle" id="middleText">WIR WERDEN HEIRATEN!</p>
 				<div class="envelope-stack" id="envelope" role="button" tabindex="0" aria-pressed="false" aria-label="Envelope illustration">
-					<img src="images/enevlope_background.png" alt="Envelope background" />
-					<img class="envelope-photo" src="images/Nico-Vanessa-Foto.svg" alt="Nico and Vanessa" />
+					<img src="images/enevlope_background.png" alt="Envelope background" fetchpriority="high" decoding="async" />
+					<img class="envelope-photo" src="images/Nico-Vanessa-Foto.svg" alt="Nico and Vanessa" fetchpriority="low" decoding="async" />
 					<div class="envelope-triangle" aria-hidden="true"></div>
-					<img class="envelope-foreground" src="images/envelope_foreground.png" alt="" aria-hidden="true" />
+					<img class="envelope-foreground" src="images/envelope_foreground.png" alt="" aria-hidden="true" fetchpriority="high" decoding="async" />
+					<img class="envelope-stamp" src="images/envelope_stamp.svg" alt="" aria-hidden="true" />
 					<div class="envelope-triangle-shadow" aria-hidden="true"></div>
 					<img class="envelope-flower-left" src="images/flower_buttom_left.png" alt="" aria-hidden="true" />
 					<img class="envelope-flower-right" src="images/flower_buttom_right.png" alt="" aria-hidden="true" />
@@ -305,6 +329,34 @@
 					const topText = document.getElementById("topText");
 					const middleText = document.getElementById("middleText");
 					const bottomText = document.getElementById("bottomText");
+					const foregroundImage = envelope.querySelector(".envelope-foreground");
+
+					function waitForImage(image) {
+						if (image.complete && image.naturalWidth > 0) {
+							return Promise.resolve();
+						}
+
+						return new Promise((resolve) => {
+							image.addEventListener("load", resolve, { once: true });
+							image.addEventListener("error", resolve, { once: true });
+						});
+					}
+
+					function preloadTexture(src) {
+						return new Promise((resolve) => {
+							const image = new Image();
+							image.addEventListener("load", resolve, { once: true });
+							image.addEventListener("error", resolve, { once: true });
+							image.src = src;
+						});
+					}
+
+					Promise.all([
+						waitForImage(foregroundImage),
+						preloadTexture("images/envelope_head_texture.png"),
+					]).then(() => {
+						envelope.classList.add("shell-ready");
+					});
 
 					function openEnvelope() {
 						if (envelope.classList.contains("open")) {
