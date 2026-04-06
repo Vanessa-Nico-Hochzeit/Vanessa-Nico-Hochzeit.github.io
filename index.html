@@ -105,6 +105,10 @@
 				cursor: pointer;
 				transform: translate(-50%, -50%);
 				filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.22));
+				-webkit-tap-highlight-color: transparent;
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
 			}
 
 			.envelope-stack img {
@@ -276,7 +280,7 @@
 						envelope.setAttribute("aria-pressed", "true");
 						topText.textContent = "Save the Date!";
 						middleText.textContent = "WIR WERDEN HEIRATEN!";
-						bottomText.textContent = "VANESSA + NICO\n11. September 2027";
+						bottomText.textContent = "NICO & VANESSA\n11. September 2027";
 					}
 
 					envelope.addEventListener("click", openEnvelope);
