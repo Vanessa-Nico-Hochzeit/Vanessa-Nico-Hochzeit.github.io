@@ -56,6 +56,9 @@
 				text-align: center;
 				display: inline-block;
 				white-space: nowrap;
+				pointer-events: none;
+				user-select: none;
+				-webkit-user-select: none;
 			}
 
 			.caption-top {
@@ -113,7 +116,6 @@
 				width: min(70vw, 470px);
 				max-height: 80vh;
 				perspective: 1200px;
-				cursor: pointer;
 				transform: translate(-50%, -50%);
 				filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.22));
 				-webkit-tap-highlight-color: transparent;
@@ -122,10 +124,18 @@
 				touch-action: manipulation;
 			}
 
+			.envelope-stack,
+			.envelope-stack * {
+				cursor: pointer;
+			}
+
 			.envelope-stack img {
 				display: block;
 				width: 100%;
 				height: auto;
+				user-select: none;
+				-webkit-user-select: none;
+				-webkit-user-drag: none;
 			}
 
 			.envelope-stack img.envelope-flower-left {
@@ -191,7 +201,7 @@
 				width: 19%;
 				height: auto;
 				transform: translate(-50%, -50%);
-				pointer-events: none;
+				pointer-events: auto;
 				z-index: 9;
 				transition: opacity 180ms ease;
 			}
@@ -316,7 +326,7 @@
 					<img class="envelope-photo" src="images/Nico-Vanessa-Foto.svg" alt="Nico and Vanessa" fetchpriority="low" decoding="async" />
 					<div class="envelope-triangle" aria-hidden="true"></div>
 					<img class="envelope-foreground" src="images/envelope_foreground.png" alt="" aria-hidden="true" fetchpriority="high" decoding="async" />
-					<img class="envelope-stamp" src="images/envelope_stamp.svg" alt="" aria-hidden="true" />
+					<img class="envelope-stamp" src="images/envelope_stamp.svg" alt="" aria-hidden="true" draggable="false" />
 					<div class="envelope-triangle-shadow" aria-hidden="true"></div>
 					<img class="envelope-flower-left" src="images/flower_buttom_left.png" alt="" aria-hidden="true" />
 					<img class="envelope-flower-right" src="images/flower_buttom_right.png" alt="" aria-hidden="true" />
@@ -327,6 +337,7 @@
 
 				<script>
 					const envelope = document.getElementById("envelope");
+					const stamp = envelope.querySelector(".envelope-stamp");
 					const topText = document.getElementById("topText");
 					const middleText = document.getElementById("middleText");
 					const bottomText = document.getElementById("bottomText");
@@ -372,6 +383,10 @@
 					}
 
 					envelope.addEventListener("click", openEnvelope);
+					stamp.addEventListener("click", (event) => {
+						event.stopPropagation();
+						openEnvelope();
+					});
 					envelope.addEventListener("keydown", (event) => {
 						if (event.key === "Enter" || event.key === " ") {
 							event.preventDefault();
