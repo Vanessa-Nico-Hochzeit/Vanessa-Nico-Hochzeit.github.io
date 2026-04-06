@@ -36,12 +36,29 @@
 				background-position: center;
 				background-repeat: no-repeat;
 				font-family: "Segoe UI", Tahoma, sans-serif;
+				overflow: hidden;
 			}
 
 			.scene {
 				position: relative;
 				width: min(70vw, 470px);
 				height: min(80vh, 580px);
+			}
+
+			.rotate-warning {
+				display: none;
+				position: fixed;
+				inset: 0;
+				z-index: 30;
+				align-items: center;
+				justify-content: center;
+				padding: 1.5rem;
+				text-align: center;
+				background: rgba(0, 0, 0, 0.58);
+				color: #fff;
+				font-size: 1.05rem;
+				font-weight: 600;
+				letter-spacing: 0.02em;
 			}
 
 			.caption {
@@ -315,6 +332,17 @@
 					transform: translateX(-50%) translateY(2.4rem);
 				}
 			}
+
+			@media (max-width: 900px) and (orientation: landscape) {
+				.scene {
+					visibility: hidden;
+					pointer-events: none;
+				}
+
+				.rotate-warning {
+					display: flex;
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -334,6 +362,7 @@
 				<p class="caption caption-invite" id="inviteText">Eine offizielle<br />Einladung folgt</p>
 				<p class="caption caption-bottom" id="bottomText">DRÜCKE AUF DEN UMSCHLAG...</p>
 			</div>
+			<div class="rotate-warning" aria-live="polite">Bitte drehe dein Handy zurueck ins Hochformat.</div>
 
 				<script>
 					const envelope = document.getElementById("envelope");
@@ -342,6 +371,16 @@
 					const middleText = document.getElementById("middleText");
 					const bottomText = document.getElementById("bottomText");
 					const foregroundImage = envelope.querySelector(".envelope-foreground");
+
+					function tryLockPortrait() {
+						if (!screen.orientation || typeof screen.orientation.lock !== "function") {
+							return;
+						}
+
+						screen.orientation.lock("portrait").catch(() => {
+							// Browsers usually block this in normal tabs; fallback is the landscape overlay.
+						});
+					}
 
 					function waitForImage(image) {
 						if (image.complete && image.naturalWidth > 0) {
@@ -369,6 +408,11 @@
 					]).then(() => {
 						envelope.classList.add("shell-ready");
 					});
+
+					tryLockPortrait();
+					window.addEventListener("orientationchange", tryLockPortrait);
+					window.addEventListener("click", tryLockPortrait, { once: true });
+					window.addEventListener("touchstart", tryLockPortrait, { once: true, passive: true });
 
 					function openEnvelope() {
 						if (envelope.classList.contains("open")) {
